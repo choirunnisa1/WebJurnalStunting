@@ -1,0 +1,279 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="initial-scale=1,user-scalable=no,maximum-scale=1,width=device-width">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <link rel="stylesheet" href="css/leaflet.css">
+    <link rel="stylesheet" href="css/qgis2web.css">
+    <link rel="stylesheet" href="css/leaflet-search.css">
+    <link href="vendor/bootstrap.min.css" rel="stylesheet">
+
+    <!-- Custom fonts for this template -->
+    <link href="vendor/font-awesome.min.css" rel="stylesheet" type="text/css">
+    <link href="https://fonts.googleapis.com/css?family=Montserrat:400,700" rel="stylesheet" type="text/css">
+    <link href='https://fonts.googleapis.com/css?family=Kaushan+Script' rel='stylesheet' type='text/css'>
+    <link href='https://fonts.googleapis.com/css?family=Droid+Serif:400,700,400italic,700italic' rel='stylesheet'
+        type='text/css'>
+    <link href='https://fonts.googleapis.com/css?family=Roboto+Slab:400,100,300,700' rel='stylesheet' type='text/css'>
+
+    <!-- Custom styles for this template -->
+    <link href="vendor/agency.min.css" rel="stylesheet">
+    <style>
+        html,
+        body,
+        #map {
+            width: 100%;
+            height: 100%;
+            padding: 0;
+            margin: 0;
+        }
+    </style>
+    <title></title>
+</head>
+<nav class="baner" id="mainNav">
+    <div class="container">
+        <h3 style="text-align: center">Peta Tematik Status Gizi Sangat Pendek Tahun 2015</h3>
+        <button class="navbar-toggler navbar-toggler-right" type="button" data-toggle="collapse"
+            data-target="#scrooling" aria-controls="scrooling" aria-expanded="false" aria-label="Toggle navigation">
+            Pilih Peta
+            <i class="fa fa-bars"></i>
+        </button>
+        <div class="collapse navbar-collapse" id="scrooling">
+            <ul class="navbar-nav text-uppercase ml-auto">
+                <li class="nav-item">
+                    <a class="nav-link js-scroll-trigger" href="sp15a.html">Usia 0-59 Bulan</a>
+                    <a class="nav-link js-scroll-trigger active" href="sp15b.html">Usia 0-29 Bulan</a>
+                </li>
+            </ul>
+        </div>
+    </div>
+</nav>
+
+<body>
+    <div id="map">
+    </div>
+    <script src="js/qgis2web_expressions.js"></script>
+    <script src="js/leaflet.js"></script>
+    <script src="js/leaflet.rotatedMarker.js"></script>
+    <script src="js/leaflet.pattern.js"></script>
+    <script src="js/leaflet-hash.js"></script>
+    <script src="js/Autolinker.min.js"></script>
+    <script src="js/rbush.min.js"></script>
+    <script src="js/labelgun.min.js"></script>
+    <script src="js/labels.js"></script>
+    <script src="data/presentasestatusgizisangatpendek_a.js"></script>
+    <script>
+        var highlightLayer;
+
+        function highlightFeature(e) {
+            highlightLayer = e.target;
+
+            if (e.target.feature.geometry.type === 'LineString') {
+                highlightLayer.setStyle({
+                    color: '#ffff00',
+                });
+            } else {
+                highlightLayer.setStyle({
+                    fillColor: '#ffff00',
+                    fillOpacity: 1
+                });
+            }
+            highlightLayer.openPopup();
+        }
+        var map = L.map('map', {
+            zoomControl: true,
+            maxZoom: 28,
+            minZoom: 1
+        }).fitBounds([
+            [-8.27335804509, 107.720668304],
+            [-5.66750016368, 112.529468696]
+        ]);
+        var hash = new L.Hash(map);
+        map.attributionControl.addAttribution(
+            '<a href="https://github.com/tomchadwin/qgis2web" target="_blank">qgis2web</a>');
+        var bounds_group = new L.featureGroup([]);
+        var basemap0 = L.tileLayer('http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            attribution: '&copy; <a href="http://openstreetmap.org">OpenStreetMap</a> contributors,<a href="http://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>',
+            maxZoom: 28
+        });
+        basemap0.addTo(map);
+
+        function setBounds() {}
+
+        function pop_presentasestatusgizisangatpendek_0(feature, layer) {
+            layer.on({
+                mouseout: function (e) {
+                    for (i in e.target._eventParents) {
+                        e.target._eventParents[i].resetStyle(e.target);
+                    }
+                    if (typeof layer.closePopup == 'function') {
+                        layer.closePopup();
+                    } else {
+                        layer.eachLayer(function (feature) {
+                            feature.closePopup()
+                        });
+                    }
+                },
+                mouseover: highlightFeature,
+            });
+            var popupContent = '<table>\
+                    <tr>\
+                        <td colspan="2"><strong>kabupaten</strong><br />' + (feature.properties['kabupaten'] !== null ?
+                Autolinker.link(String(feature.properties['kabupaten'])) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <th scope="row">kode</th>\
+                        <td>' + (feature.properties['kode'] !== null ? Autolinker.link(String(feature.properties[
+                'kode'])) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <th scope="row">sgt pendek</th>\
+                        <td>' + (feature.properties['sgt pendek'] !== null ? Autolinker.link(String(feature.properties[
+                'sgt pendek'])) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <th scope="row">pend</th>\
+                        <td>' + (feature.properties['pend'] !== null ? Autolinker.link(String(feature.properties[
+                'pend'])) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <th scope="row">normal</th>\
+                        <td>' + (feature.properties['normal'] !== null ? Autolinker.link(String(feature.properties[
+                'normal'])) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <th scope="row">sgt+pend</th>\
+                        <td>' + (feature.properties['sgt+pend'] !== null ? Autolinker.link(String(feature.properties[
+                'sgt+pend'])) : '') + '</td>\
+                    </tr>\
+                </table>';
+            layer.bindPopup(popupContent, {
+                maxHeight: 400
+            });
+        }
+
+        function style_presentasestatusgizisangatpendek_0_0(feature) {
+            if (feature.properties['sgt pendek'] >= 0.000000 && feature.properties['sgt pendek'] <= 3.000000) {
+                return {
+                    pane: 'pane_presentasestatusgizisangatpendek_0',
+                    opacity: 1,
+                    color: 'rgba(0,0,0,1.0)',
+                    dashArray: '',
+                    lineCap: 'butt',
+                    lineJoin: 'miter',
+                    weight: 1.0,
+                    fill: true,
+                    fillOpacity: 1,
+                    fillColor: 'rgba(237,248,251,1.0)',
+                }
+            }
+            if (feature.properties['sgt pendek'] >= 3.000000 && feature.properties['sgt pendek'] <= 6.000000) {
+                return {
+                    pane: 'pane_presentasestatusgizisangatpendek_0',
+                    opacity: 1,
+                    color: 'rgba(0,0,0,1.0)',
+                    dashArray: '',
+                    lineCap: 'butt',
+                    lineJoin: 'miter',
+                    weight: 1.0,
+                    fill: true,
+                    fillOpacity: 1,
+                    fillColor: 'rgba(153,216,206,1.0)',
+                }
+            }
+            if (feature.properties['sgt pendek'] >= 6.000000 && feature.properties['sgt pendek'] <= 10.000000) {
+                return {
+                    pane: 'pane_presentasestatusgizisangatpendek_0',
+                    opacity: 1,
+                    color: 'rgba(0,0,0,1.0)',
+                    dashArray: '',
+                    lineCap: 'butt',
+                    lineJoin: 'miter',
+                    weight: 1.0,
+                    fill: true,
+                    fillOpacity: 1,
+                    fillColor: 'rgba(63,173,118,1.0)',
+                }
+            }
+            if (feature.properties['sgt pendek'] >= 10.000000 && feature.properties['sgt pendek'] <= 20.000000) {
+                return {
+                    pane: 'pane_presentasestatusgizisangatpendek_0',
+                    opacity: 1,
+                    color: 'rgba(0,0,0,1.0)',
+                    dashArray: '',
+                    lineCap: 'butt',
+                    lineJoin: 'miter',
+                    weight: 1.0,
+                    fill: true,
+                    fillOpacity: 1,
+                    fillColor: 'rgba(0,109,44,1.0)',
+                }
+            }
+        }
+        map.createPane('pane_presentasestatusgizisangatpendek_0');
+        map.getPane('pane_presentasestatusgizisangatpendek_0').style.zIndex = 400;
+        map.getPane('pane_presentasestatusgizisangatpendek_0').style['mix-blend-mode'] = 'normal';
+        var layer_presentasestatusgizisangatpendek_0 = new L.geoJson(json_presentasestatusgizisangatpendek_0, {
+            attribution: '<a href=""></a>',
+            pane: 'pane_presentasestatusgizisangatpendek_0',
+            onEachFeature: pop_presentasestatusgizisangatpendek_0,
+            style: style_presentasestatusgizisangatpendek_0_0,
+        });
+        bounds_group.addLayer(layer_presentasestatusgizisangatpendek_0);
+        map.addLayer(layer_presentasestatusgizisangatpendek_0);
+        var baseMaps = {};
+        L.control.layers(baseMaps, {
+            'presentase status gizi sangat pendek<br /><table><tr><td style="text-align: center;"><img src="legend/presentasestatusgizisangatpendek_0_03sangatrendah0.png" /></td><td> 0 - 3 sangat rendah</td></tr><tr><td style="text-align: center;"><img src="legend/presentasestatusgizisangatpendek_0_36rendah1.png" /></td><td> 3 - 6 rendah</td></tr><tr><td style="text-align: center;"><img src="legend/presentasestatusgizisangatpendek_0_610normal2.png" /></td><td> 6 - 10 normal</td></tr><tr><td style="text-align: center;"><img src="legend/presentasestatusgizisangatpendek_0_1020tinggi3.png" /></td><td> 10 - 20 tinggi</td></tr></table>': layer_presentasestatusgizisangatpendek_0,
+        }, {
+            collapsed: false
+        }).addTo(map);
+        setBounds();
+        var i = 0;
+        layer_presentasestatusgizisangatpendek_0.eachLayer(function (layer) {
+            var context = {
+                feature: layer.feature,
+                variables: {}
+            };
+            layer.bindTooltip((layer.feature.properties['kabupaten'] !== null ? String(
+                '<div style="color: #000000; font-size: 8pt; font-family: \'MS Shell Dlg 2\', sans-serif;">' +
+                layer.feature.properties['kabupaten']) + '</div>' : ''), {
+                permanent: true,
+                offset: [-0, -16],
+                className: 'css_presentasestatusgizisangatpendek_0'
+            });
+            labels.push(layer);
+            totalMarkers += 1;
+            layer.added = true;
+            addLabel(layer, i);
+            i++;
+        });
+        resetLabels([layer_presentasestatusgizisangatpendek_0]);
+        map.on("zoomend", function () {
+            resetLabels([layer_presentasestatusgizisangatpendek_0]);
+        });
+        map.on("layeradd", function () {
+            resetLabels([layer_presentasestatusgizisangatpendek_0]);
+        });
+        map.on("layerremove", function () {
+            resetLabels([layer_presentasestatusgizisangatpendek_0]);
+        });
+    </script>
+    <script src="vendor/jquery.min.js"></script>
+    <script src="vendor/bootstrap.bundle.min.js"></script>
+
+    <!-- Plugin JavaScript -->
+    <script src="vendor/jquery.easing.min.js"></script>
+
+    <!-- Contact form JavaScript -->
+    <script src="vendor/jqBootstrapValidation.js"></script>
+    <script src="vendor/contact_me.js"></script>
+
+    <!-- Custom scripts for this template -->
+    <script src="vendor/agency.min.css"></script>
+</body>
+
+</html>
